@@ -1,6 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
 
 app = Flask(__name__)
+
+
+# DB--------------------------------------------------
+class Database:
+    def __init__(self, db_name):
+        self.db_name = db_name
+
+    def __enter__(self):
+        self.con = sqlite3.connect(self.db_name)
+        self.con.row_factory = sqlite3.Row
+        self.cur = self.con.cursor()
+        return self.cur
+
+    def __exit__(self, exc_type, exec_val, exc_tb):
+        self.con.commit()
+        self.con.close()
 
 
 # index-------------------------------------------------
@@ -36,7 +53,18 @@ def auth_user():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    return redirect(url_for("dashboard", email=email, password=password))
+    with Database("finance.db") as cursor:
+        cursor.execute(
+            "SELECT * FROM users WHERE email = ? AND password = ?",
+            (email, password),
+        )
+        user = cursor.fetchone()
+        if user is None:
+            return render_template(
+                "login.html", title="Login", error="Invalid email or password"
+            )
+
+    return render_template("dashboard.html", name=user["name"], surname=user["surname"])
 
 
 # register----------------------------------------------
@@ -47,19 +75,31 @@ def register():
 
 @app.route("/register/user", methods=["POST"])
 def register_user():
-    username = request.form.get("username")
+    name = request.form.get("name")
+    surname = request.form.get("surname")
     email = request.form.get("email")
     password = request.form.get("password")
 
-    return render_template("register_success.html", title="Success", username=username)
+    with Database("finance.db") as cursor:
+        cursor.execute(
+            "INSERT INTO users (name, surname, email, password) VALUES (?, ?, ?, ?)",
+            (name, surname, email, password),
+        )
+
+    return render_template(
+        "register_success.html",
+        title="Success",
+        name=name,
+        surname=surname,
+    )
 
 
 # dashboard----------------------------------------------
 @app.route("/dashboard")
 def dashboard():
-    email = request.args.get("email")
-    password = request.args.get("password")
-    return render_template("dashboard.html", email=email, password=password)
+    name = request.args.get("name")
+    surname = request.args.get("surname")
+    return render_template("dashboard.html", name=name, surname=surname)
 
 
 # category----------------------------------------------
