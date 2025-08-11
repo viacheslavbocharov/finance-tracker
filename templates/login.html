@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Login</h1>
-<form method="POST" action="/login">
-    <input type="email" name="email" placeholder="email">
-    <input type="password" name="password" placeholder="Password">
+<div class="card">
+  <h1>Login</h1>
+  {% if error %}<ul class="flash"><li class="error">{{ error }}</li></ul>{% endif %}
+  <form method="POST" action="{{ url_for('auth_user') }}">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
     <button type="submit">Login</button>
-</form>
+    <a href="{{ url_for('register') }}" class="btn-link">Register</a>
+  </form>
+</div>
 {% endblock %}

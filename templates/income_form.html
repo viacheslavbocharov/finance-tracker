@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:620px;">
+  <h1 style="margin:0 0 .75rem;">Add Income</h1>
+
+  <form method="post" action="{{ url_for('post_income') }}" style="display:grid;gap:.8rem;">
+    <label>
+      Category
+      <select name="category_id" required>
+        {% if sys_categories %}
+          <optgroup label="Default">
+            {% for c in sys_categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </optgroup>
+        {% endif %}
+        {% if user_categories %}
+          <optgroup label="My categories">
+            {% for c in user_categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </optgroup>
+        {% endif %}
+      </select>
+    </label>
+
+    <label>
+      Amount
+      <input type="number" name="amount" step="0.01" min="0" required />
+    </label>
+
+    <label>
+      Description
+      <input type="text" name="description" maxlength="200" />
+    </label>
+
+    <label>
+      Date & time
+      <input type="datetime-local" name="date" value="{{ now_value }}"/>
+    </label>
+
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:.25rem;">
+      <a href="{{ url_for('dashboard') }}" class="btn-link">Cancel</a>
+      <button type="submit">Save</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

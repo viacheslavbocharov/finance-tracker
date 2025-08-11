@@ -1,5 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Dashboard</h1>
-<p>Hi, {{ name }} {{ surname }}!</p>
+
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+  <div>
+    <h1 style="margin:0;">Dashboard</h1>
+    <p style="margin:.25rem 0 0;">Hi, {{ name }} {{ surname }}!</p>
+  </div>
+
+  <div style="display:flex; gap:.5rem;">
+    <form method="get" action="{{ url_for('get_income') }}"><button type="submit">Add Income</button></form>
+    <form method="get" action="{{ url_for('get_spend') }}"><button type="submit">Add Spend</button></form>
+  </div>
+</div>
+
+<div class="card" style="margin-top:1rem;">
+  <h2 style="margin:0 0 .5rem;">Income</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th style="text-align:right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if incomes and incomes|length %}
+          {% for t in incomes %}
+          <tr>
+            <td>{{ t.date_str }}</td>
+            <td>{{ t.get('description','') }}</td>
+            <td>{{ t.get('category','-') }}</td>
+            <td style="text-align:right;">
+              {{ (t.get('amount') if t.get('amount') is not none else '—') }}
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4" class="muted" style="text-align:center;">No income data</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" style="margin-top:1rem;">
+  <h2 style="margin:0 0 .5rem;">Spends</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th style="text-align:right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if spends and spends|length %}
+          {% for t in spends %}
+          <tr>
+            <td>{{ t.date_str }}</td>
+            <td>{{ t.get('description','') }}</td>
+            <td>{{ t.get('category','-') }}</td>
+            <td style="text-align:right;">
+              {{ (t.get('amount') if t.get('amount') is not none else '—') }}
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="4" class="muted" style="text-align:center;">No spend data</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 {% endblock %}
