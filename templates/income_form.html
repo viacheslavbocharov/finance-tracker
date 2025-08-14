@@ -9,7 +9,7 @@
       <select name="category_id" required>
         {% if sys_categories %}
           <optgroup label="Default">
-            {% for c in sys_categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+           {% for c in sys_categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
           </optgroup>
         {% endif %}
         {% if user_categories %}

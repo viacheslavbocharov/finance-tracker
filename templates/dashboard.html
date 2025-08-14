@@ -6,10 +6,13 @@
     <h1 style="margin:0;">Dashboard</h1>
     <p style="margin:.25rem 0 0;">Hi, {{ name }} {{ surname }}!</p>
   </div>
-
   <div style="display:flex; gap:.5rem;">
-    <form method="get" action="{{ url_for('get_income') }}"><button type="submit">Add Income</button></form>
-    <form method="get" action="{{ url_for('get_spend') }}"><button type="submit">Add Spend</button></form>
+    <form method="get" action="{{ url_for('get_income') }}">
+      <button type="submit">Add Income</button>
+    </form>
+    <form method="get" action="{{ url_for('get_spend') }}">
+      <button type="submit">Add Spend</button>
+    </form>
   </div>
 </div>
 
@@ -29,12 +32,10 @@
         {% if incomes and incomes|length %}
           {% for t in incomes %}
           <tr>
-            <td>{{ t.date_str }}</td>
-            <td>{{ t.get('description','') }}</td>
-            <td>{{ t.get('category','-') }}</td>
-            <td style="text-align:right;">
-              {{ (t.get('amount') if t.get('amount') is not none else '—') }}
-            </td>
+            <td>{{ t.date|fmtdate }}</td>
+            <td>{{ t.description or '' }}</td>
+            <td>{{ t.category.name if t.category else '-' }}</td>
+            <td style="text-align:right;">{{ '%.2f'|format(t.amount or 0) }}</td>
           </tr>
           {% endfor %}
         {% else %}
@@ -61,12 +62,10 @@
         {% if spends and spends|length %}
           {% for t in spends %}
           <tr>
-            <td>{{ t.date_str }}</td>
-            <td>{{ t.get('description','') }}</td>
-            <td>{{ t.get('category','-') }}</td>
-            <td style="text-align:right;">
-              {{ (t.get('amount') if t.get('amount') is not none else '—') }}
-            </td>
+            <td>{{ t.date|fmtdate }}</td>
+            <td>{{ t.description or '' }}</td>
+            <td>{{ t.category.name if t.category else '-' }}</td>
+            <td style="text-align:right;">{{ '%.2f'|format(t.amount or 0) }}</td>
           </tr>
           {% endfor %}
         {% else %}
